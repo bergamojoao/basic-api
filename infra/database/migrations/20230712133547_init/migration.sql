@@ -6,7 +6,8 @@ CREATE TABLE "User" (
     "password" TEXT,
     "name" TEXT NOT NULL,
     "role" TEXT NOT NULL,
-    "active" BOOLEAN NOT NULL DEFAULT false,
+    "picture" TEXT,
+    "active" BOOLEAN NOT NULL DEFAULT true,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
