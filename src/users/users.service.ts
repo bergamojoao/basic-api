@@ -43,7 +43,7 @@ export class UsersService {
   }
 
   async findByEmail(email: string) {
-    var { password: _, ...user } = await this.prisma.user.findFirst({
+    const user = await this.prisma.user.findFirst({
       where: { email },
     });
     return user;

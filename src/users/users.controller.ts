@@ -12,7 +12,9 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { Roles } from 'src/auth/auth.decorator';
 
+@UseGuards(AuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
@@ -22,8 +24,8 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @UseGuards(AuthGuard)
   @Get()
+  @Roles('admin')
   findAll() {
     return this.usersService.findAll();
   }

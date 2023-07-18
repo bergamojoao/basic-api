@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { PrismaService } from 'src/services/prisma.service';
@@ -15,6 +16,7 @@ export class AuthGuard implements CanActivate {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly prismaService: PrismaService,
+    private readonly reflector: Reflector,
   ) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -31,16 +33,26 @@ export class AuthGuard implements CanActivate {
         }
       );
 
-      var user = this.prismaService.user.findFirst({ where: { id } })
+      const user = await this.prismaService.user.findFirst({ where: { id } })
 
       request['user'] = user;
+
+      const roles = this.reflector.get<string[]>('roles', context.getHandler());
+      if (!roles) {
+        return true;
+      }
+
+      return roles.includes(user.role);
+
     } catch {
       throw new UnauthorizedException();
     }
-    return true;
   }
 
   private extractTokenFromHeader(request: Request): string | undefined {
+    if (request.cookies['token']) {
+      return request.cookies['token']
+    }
     const [type, token] = request.headers.authorization?.split(' ') ?? [];
     return type === 'Bearer' ? token : undefined;
   }
