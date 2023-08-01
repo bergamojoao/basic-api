@@ -35,7 +35,7 @@ export class AuthGuard implements CanActivate {
 
       const user = await this.prismaService.user.findFirst({ where: { id } })
 
-      request['user'] = user;
+      request['user'] = { user };
 
       const roles = this.reflector.get<string[]>('roles', context.getHandler());
       if (!roles) {

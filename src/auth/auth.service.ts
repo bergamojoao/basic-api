@@ -25,11 +25,26 @@ export class AuthService {
       if (user && user.password) {
         if (await this.bcrypt.compare(authData.password, user.password)) {
           const token = await this.jwtService.signAsync({ id: user.id }, { secret: jwtSecret, expiresIn: '7d' });
-          return token;
+          return { token, ...user };
         }
       }
 
       return null;
+    } catch (e) {
+      console.log(e);
+      return null;
+    }
+  }
+
+  async renewToken(userId: string) {
+    try {
+      const jwtSecret = this.configService.get('JWT_SECRET');
+
+      const user = await this.usersService.findOne(userId);
+
+      const token = await this.jwtService.signAsync({ id: userId }, { secret: jwtSecret, expiresIn: '7d' });
+      return { token, ...user };
+
     } catch (e) {
       console.log(e);
       return null;
