@@ -40,7 +40,7 @@ export class GoogleAuthenticationService {
       if (user) {
         const token = await this.jwtService.signAsync({ id: user.id }, { secret: jwtSecret, expiresIn: '7d' });
 
-        return token;
+        return { token, ...user };
       }
 
       const response = await this.httpService.axiosRef.get('https://www.googleapis.com/oauth2/v3/userinfo', {
@@ -63,7 +63,7 @@ export class GoogleAuthenticationService {
 
         const token = await this.jwtService.signAsync({ id: user.id }, { secret: jwtSecret, expiresIn: '7d' });
 
-        return token;
+        return { token, ...user };
       }
 
       return null;

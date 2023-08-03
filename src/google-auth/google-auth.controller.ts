@@ -2,7 +2,7 @@ import { Body, Controller, Post, Req, Res, UnauthorizedException } from '@nestjs
 import { GoogleAuthenticationService } from './google-auth.service';
 import { TokenVerificationDto } from './dto/token-verification.dto';
 import { Request } from 'express';
-import moment from 'moment';
+import * as moment from "moment";
 
 @Controller('google-auth')
 export class GoogleAuthenticationController {
@@ -11,14 +11,14 @@ export class GoogleAuthenticationController {
   @Post()
   async authenticate(@Body() tokenData: TokenVerificationDto, @Req() request: Request) {
 
-    const token = await this.googleAuthenticationService.authenticate(tokenData.token);
+    const user = await this.googleAuthenticationService.authenticate(tokenData.token);
 
-    if (token) {
-      request.res.cookie('token', token, {
+    if (user) {
+      request.res.cookie('token', user.token, {
         httpOnly: true,
         expires: moment(new Date()).add(7, 'days').toDate()
       });
-      return { token }
+      return user;
     }
 
     return new UnauthorizedException();
