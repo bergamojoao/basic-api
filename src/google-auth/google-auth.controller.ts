@@ -21,6 +21,6 @@ export class GoogleAuthenticationController {
       return user;
     }
 
-    return new UnauthorizedException();
+    throw new UnauthorizedException();
   }
 }
